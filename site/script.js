@@ -25,6 +25,7 @@ function obterDiasIndisponiveis() {
 function adicionarDisciplina(nome, aulas, diasIndisponiveis) {
   let diasDisponiveis = [...diasSemana];
   let aulasRestantes = aulas;
+  let corDisciplina = getRandomColor(); // Gera uma cor aleatória para a disciplina
 
   while (aulasRestantes > 0 && diasDisponiveis.length > 0) {
     let diaAleatorio = getRandomDia(diasDisponiveis);
@@ -32,7 +33,10 @@ function adicionarDisciplina(nome, aulas, diasIndisponiveis) {
 
     if (periodosDisponiveis.length > 0) {
       let periodoAleatorio = getRandomPeriodo(periodosDisponiveis);
-      disciplinas[diaAleatorio][periodoAleatorio] = nome;
+      disciplinas[diaAleatorio][periodoAleatorio] = {
+        nome: nome,
+        cor: corDisciplina
+      };
       aulasRestantes--;
     } else {
       diasDisponiveis = diasDisponiveis.filter(dia => dia !== diaAleatorio);
@@ -71,6 +75,15 @@ function getRandomPeriodo(periodos) {
   return periodos[randomIndex];
 }
 
+function getRandomColor() {
+  let letters = "0123456789ABCDEF";
+  let color = "#";
+  for (let i = 0; i < 6; i++) {
+    color += letters[Math.floor(Math.random() * 16)];
+  }
+  return color;
+}
+
 function atualizarTabela() {
   let corpoTabela = document.getElementById("corpo-tabela");
   corpoTabela.innerHTML = "";
@@ -83,7 +96,11 @@ function atualizarTabela() {
 
     for (let j = 0; j < 5; j++) {
       let colunaPeriodo = document.createElement("td");
-      colunaPeriodo.textContent = disciplinas[diasSemana[i]][j] || "";
+      let disciplina = disciplinas[diasSemana[i]][j];
+      if (disciplina) {
+        colunaPeriodo.textContent = disciplina.nome;
+        colunaPeriodo.style.backgroundColor = disciplina.cor;
+      }
       linha.appendChild(colunaPeriodo);
     }
 
