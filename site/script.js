@@ -6,17 +6,29 @@ formDisciplina.addEventListener("submit", function(event) {
   event.preventDefault();
   let nome = document.getElementById("nome").value;
   let aulas = parseInt(document.getElementById("aulas").value);
-  adicionarDisciplina(nome, aulas);
+  let diasIndisponiveis = obterDiasIndisponiveis();
+  adicionarDisciplina(nome, aulas, diasIndisponiveis);
   formDisciplina.reset();
 });
 
-function adicionarDisciplina(nome, aulas) {
+function obterDiasIndisponiveis() {
+  let diasIndisponiveis = [];
+  let checkboxes = document.getElementsByName("dias");
+  checkboxes.forEach(function(checkbox) {
+    if (checkbox.checked) {
+      diasIndisponiveis.push(checkbox.value);
+    }
+  });
+  return diasIndisponiveis;
+}
+
+function adicionarDisciplina(nome, aulas, diasIndisponiveis) {
   let diasDisponiveis = [...diasSemana];
   let aulasRestantes = aulas;
 
   while (aulasRestantes > 0 && diasDisponiveis.length > 0) {
     let diaAleatorio = getRandomDia(diasDisponiveis);
-    let periodosDisponiveis = getPeriodosDisponiveis(diaAleatorio);
+    let periodosDisponiveis = getPeriodosDisponiveis(diaAleatorio, diasIndisponiveis);
 
     if (periodosDisponiveis.length > 0) {
       let periodoAleatorio = getRandomPeriodo(periodosDisponiveis);
@@ -35,14 +47,23 @@ function getRandomDia(dias) {
   return dias[randomIndex];
 }
 
-function getPeriodosDisponiveis(dia) {
+function getPeriodosDisponiveis(dia, diasIndisponiveis) {
   let periodos = [];
   for (let i = 0; i < 5; i++) {
-    if (!disciplinas[dia][i]) {
+    if (!disciplinas[dia][i] && !verificarDiaIndisponivel(dia, i, diasIndisponiveis)) {
       periodos.push(i);
     }
   }
   return periodos;
+}
+
+function verificarDiaIndisponivel(dia, periodo, diasIndisponiveis) {
+  for (let i = 0; i < diasIndisponiveis.length; i++) {
+    if (diasIndisponiveis[i] === dia) {
+      return true;
+    }
+  }
+  return false;
 }
 
 function getRandomPeriodo(periodos) {
