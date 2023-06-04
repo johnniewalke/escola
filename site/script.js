@@ -32,7 +32,22 @@ function adicionarDisciplina(nome, aulas, diasIndisponiveis) {
     let periodosDisponiveis = getPeriodosDisponiveis(diaAleatorio, diasIndisponiveis);
 
     if (periodosDisponiveis.length > 0) {
+      // Verifica se já existem disciplinas consecutivas no mesmo dia
+      let periodosConsecutivos = encontrarPeriodosConsecutivos(disciplinas[diaAleatorio]);
       let periodoAleatorio = getRandomPeriodo(periodosDisponiveis);
+
+      if (periodosConsecutivos.length > 0) {
+        // Verifica se a disciplina atual pode ser colocada na sequência
+        let podeColocarNaSequencia = verificarSePodeColocarNaSequencia(periodosConsecutivos, periodoAleatorio);
+
+        if (!podeColocarNaSequencia) {
+          // Se não pode colocar na sequência, remove os períodos consecutivos
+          periodosConsecutivos.forEach(periodo => {
+            delete disciplinas[diaAleatorio][periodo];
+          });
+        }
+      }
+
       disciplinas[diaAleatorio][periodoAleatorio] = {
         nome: nome,
         cor: corDisciplina
@@ -46,6 +61,26 @@ function adicionarDisciplina(nome, aulas, diasIndisponiveis) {
   atualizarTabela();
 }
 
+function encontrarPeriodosConsecutivos(diaDisciplina) {
+  let periodosConsecutivos = [];
+  let periodoAnterior = null;
+
+  for (let i = 0; i < 5; i++) {
+    if (diaDisciplina[i]) {
+      if (periodoAnterior !== null && i === periodoAnterior + 1) {
+        periodosConsecutivos.push(i);
+      }
+      periodoAnterior = i;
+    }
+  }
+
+  return periodosConsecutivos;
+}
+
+function verificarSePodeColocarNaSequencia(periodosConsecutivos, periodoAtual) {
+  return periodosConsecutivos.includes(periodoAtual - 1) || periodosConsecutivos.includes(periodoAtual + 1);
+}
+
 function getRandomDia(dias) {
   let randomIndex = Math.floor(Math.random() * dias.length);
   return dias[randomIndex];
@@ -54,20 +89,11 @@ function getRandomDia(dias) {
 function getPeriodosDisponiveis(dia, diasIndisponiveis) {
   let periodos = [];
   for (let i = 0; i < 5; i++) {
-    if (!disciplinas[dia][i] && !verificarDiaIndisponivel(dia, i, diasIndisponiveis)) {
+    if (!disciplinas[dia][i] && !diasIndisponiveis.includes(dia)) {
       periodos.push(i);
     }
   }
   return periodos;
-}
-
-function verificarDiaIndisponivel(dia, periodo, diasIndisponiveis) {
-  for (let i = 0; i < diasIndisponiveis.length; i++) {
-    if (diasIndisponiveis[i] === dia) {
-      return true;
-    }
-  }
-  return false;
 }
 
 function getRandomPeriodo(periodos) {
