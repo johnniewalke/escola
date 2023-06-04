@@ -2,15 +2,16 @@
 <html lang="pt-br">
 
 <head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="author" content="Johnnie Menges Giacomelli">
-    <meta name="description" content="Um site para procurar vagas de emprego e serviços terceirizados">
-    <meta name="robots" content="index, follow"> <!--já é padrão-->
-    <title>Cronograma Escolar</title>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="author" content="Johnnie Menges Giacomelli">
+  <meta name="description" content="Um site para procurar vagas de emprego e serviços terceirizados">
+  <meta name="robots" content="index, follow"> <!--já é padrão-->
+  <title>Cronograma Escolar</title>
   <link rel="stylesheet" type="text/css" href="style.css">
 </head>
+
 <body>
   <h1>Cronograma Escolar</h1>
 
@@ -39,6 +40,7 @@
 
     <br>
     <button type="submit">Adicionar Disciplina</button>
+    <button type="button" onclick="reorganizarDisciplinas()">Reorganizar Disciplinas</button>
   </form>
 
   <table id="cronograma">
@@ -58,4 +60,5 @@
 
   <script src="script.js"></script>
 </body>
+
 </html>

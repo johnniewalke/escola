@@ -108,6 +108,46 @@ function atualizarTabela() {
   }
 }
 
+function reorganizarDisciplinas() {
+  let todasDisciplinas = [];
+
+  // Coletar todas as disciplinas cadastradas
+  for (let dia in disciplinas) {
+    for (let periodo in disciplinas[dia]) {
+      todasDisciplinas.push(disciplinas[dia][periodo]);
+    }
+  }
+
+  // Limpar a estrutura de disciplinas
+  for (let dia in disciplinas) {
+    disciplinas[dia] = {};
+  }
+
+  // Reatribuir períodos aleatoriamente para as disciplinas
+  todasDisciplinas.forEach(function(disciplina) {
+    let diasDisponiveis = [...diasSemana];
+    let aulasRestantes = 1;
+
+    while (aulasRestantes > 0 && diasDisponiveis.length > 0) {
+      let diaAleatorio = getRandomDia(diasDisponiveis);
+      let periodosDisponiveis = getPeriodosDisponiveis(diaAleatorio, []);
+
+      if (periodosDisponiveis.length > 0) {
+        let periodoAleatorio = getRandomPeriodo(periodosDisponiveis);
+        disciplinas[diaAleatorio][periodoAleatorio] = {
+          nome: disciplina.nome,
+          cor: disciplina.cor
+        };
+        aulasRestantes--;
+      } else {
+        diasDisponiveis = diasDisponiveis.filter(dia => dia !== diaAleatorio);
+      }
+    }
+  });
+
+  atualizarTabela();
+}
+
 // Inicialização da matriz de disciplinas
 for (let i = 0; i < diasSemana.length; i++) {
   disciplinas[diasSemana[i]] = {};
