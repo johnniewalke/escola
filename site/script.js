@@ -11,6 +11,12 @@ formDisciplina.addEventListener("submit", function(event) {
   formDisciplina.reset();
 });
 
+let botaoReorganizar = document.getElementById("reorganizar");
+botaoReorganizar.addEventListener("click", function(event) {
+  event.preventDefault();
+  reorganizarDisciplinas();
+});
+
 function obterDiasIndisponiveis() {
   let diasIndisponiveis = [];
   let checkboxes = document.getElementsByName("dias");
@@ -35,7 +41,8 @@ function adicionarDisciplina(nome, aulas, diasIndisponiveis) {
       let periodoAleatorio = getRandomPeriodo(periodosDisponiveis);
       disciplinas[diaAleatorio][periodoAleatorio] = {
         nome: nome,
-        cor: corDisciplina
+        cor: corDisciplina,
+        diasIndisponiveis: diasIndisponiveis
       };
       aulasRestantes--;
     } else {
@@ -109,41 +116,38 @@ function atualizarTabela() {
 }
 
 function reorganizarDisciplinas() {
-  let todasDisciplinas = [];
+  let disciplinasArray = [];
 
-  // Coletar todas as disciplinas cadastradas
+  // Converter as disciplinas em um array para facilitar o reajuste
   for (let dia in disciplinas) {
     for (let periodo in disciplinas[dia]) {
-      todasDisciplinas.push(disciplinas[dia][periodo]);
+      disciplinasArray.push({
+        dia: dia,
+        periodo: periodo,
+        disciplina: disciplinas[dia][periodo]
+      });
     }
   }
 
-  // Limpar a estrutura de disciplinas
-  for (let dia in disciplinas) {
+  disciplinasArray.sort((a, b) => b.disciplina.diasIndisponiveis.length - a.disciplina.diasIndisponiveis.length);
+
+  let index = 0;
+  for (let dia of diasSemana) {
     disciplinas[dia] = {};
-  }
+    let aulasRestantes = disciplinasArray.filter(item => item.dia === dia).length;
 
-  // Reatribuir períodos aleatoriamente para as disciplinas
-  todasDisciplinas.forEach(function(disciplina) {
-    let diasDisponiveis = [...diasSemana];
-    let aulasRestantes = 1;
+    for (let i = 0; i < 5; i++) {
+      if (aulasRestantes === 0) {
+        break;
+      }
 
-    while (aulasRestantes > 0 && diasDisponiveis.length > 0) {
-      let diaAleatorio = getRandomDia(diasDisponiveis);
-      let periodosDisponiveis = getPeriodosDisponiveis(diaAleatorio, []);
-
-      if (periodosDisponiveis.length > 0) {
-        let periodoAleatorio = getRandomPeriodo(periodosDisponiveis);
-        disciplinas[diaAleatorio][periodoAleatorio] = {
-          nome: disciplina.nome,
-          cor: disciplina.cor
-        };
+      if (!disciplinas[dia][i]) {
+        disciplinas[dia][i] = disciplinasArray[index].disciplina;
+        index++;
         aulasRestantes--;
-      } else {
-        diasDisponiveis = diasDisponiveis.filter(dia => dia !== diaAleatorio);
       }
     }
-  });
+  }
 
   atualizarTabela();
 }
