@@ -1,63 +1,136 @@
 <!DOCTYPE html>
-<html lang="pt-br">
+<html>
 
 <head>
   <meta charset="UTF-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="author" content="Johnnie Menges Giacomelli">
-  <meta name="description" content="Um site para procurar vagas de emprego e serviços terceirizados">
-  <meta name="robots" content="index, follow"> <!--já é padrão-->
-  <title>Cronograma Escolar</title>
-  <link rel="stylesheet" type="text/css" href="style.css">
+  <title>Distribuição de Disciplinas</title>
 </head>
 
 <body>
-  <h1>Cronograma Escolar</h1>
-
   <form id="form-disciplina">
-    <label for="nome">Disciplina:</label>
-    <input type="text" id="nome" required>
-    <label for="aulas">Aulas por semana:</label>
-    <input type="number" id="aulas" required>
-
-    <label for="dias">Dias em que não pode estar:</label>
+    <label for="nome">Nome da Disciplina:</label>
+    <input type="text" id="nome" required><br>
+    <label for="aulas">Aulas por Semana:</label>
+    <input type="number" id="aulas" required><br>
     <br>
-    <input type="checkbox" id="segunda" name="dias" value="Segunda">
-    <label for="segunda">Segunda-feira</label>
+    <label>Indisponibilidades de Períodos:</label><br>
+    <span>Segunda-feira</span>
+    <input type="checkbox" id="segunda0" name="indisponibilidades" value="segunda-0">
+    <label for="segunda0">1º Período</label>
+    <input type="checkbox" id="segunda1" name="indisponibilidades" value="segunda-1">
+    <label for="segunda1">2º Período</label>
+    <input type="checkbox" id="segunda2" name="indisponibilidades" value="segunda-2">
+    <label for="segunda2">3º Período</label>
+    <input type="checkbox" id="segunda3" name="indisponibilidades" value="segunda-3">
+    <label for="segunda3">4º Período</label>
+    <input type="checkbox" id="segunda4" name="indisponibilidades" value="segunda-4">
+    <label for="segunda4">5º Período</label>
     <br>
-    <input type="checkbox" id="terca" name="dias" value="Terça">
-    <label for="terca">Terça-feira</label>
+    <span>Terça-feira</span>
+    <input type="checkbox" id="terca0" name="indisponibilidades" value="terca-0">
+    <label for="terca0">1º Período</label>
+    <input type="checkbox" id="terca1" name="indisponibilidades" value="terca-1">
+    <label for="terca1">2º Período</label>
+    <input type="checkbox" id="terca2" name="indisponibilidades" value="terca-2">
+    <label for="terca2">3º Período</label>
+    <input type="checkbox" id="terca3" name="indisponibilidades" value="terca-3">
+    <label for="terca3">4º Período</label>
+    <input type="checkbox" id="terca4" name="indisponibilidades" value="terca-4">
+    <label for="terca4">5º Período</label>
     <br>
-    <input type="checkbox" id="quarta" name="dias" value="Quarta">
-    <label for="quarta">Quarta-feira</label>
+    <span>Quarta-feira</span>
+    <input type="checkbox" id="quarta0" name="indisponibilidades" value="quarta-0">
+    <label for="quarta0">1º Período</label>
+    <input type="checkbox" id="quarta1" name="indisponibilidades" value="quarta-1">
+    <label for="quarta1">2º Período</label>
+    <input type="checkbox" id="quarta2" name="indisponibilidades" value="quarta-2">
+    <label for="quarta2">3º Período</label>
+    <input type="checkbox" id="quarta3" name="indisponibilidades" value="quarta-3">
+    <label for="quarta3">4º Período</label>
+    <input type="checkbox" id="quarta4" name="indisponibilidades" value="quarta-4">
+    <label for="quarta4">5º Período</label>
     <br>
-    <input type="checkbox" id="quinta" name="dias" value="Quinta">
-    <label for="quinta">Quinta-feira</label>
+    <span>Quinta-feira</span>
+    <input type="checkbox" id="quinta0" name="indisponibilidades" value="quinta-0">
+    <label for="quinta0">1º Período</label>
+    <input type="checkbox" id="quinta1" name="indisponibilidades" value="quinta-1">
+    <label for="quinta1">2º Período</label>
+    <input type="checkbox" id="quinta2" name="indisponibilidades" value="quinta-2">
+    <label for="quinta2">3º Período</label>
+    <input type="checkbox" id="quinta3" name="indisponibilidades" value="quinta-3">
+    <label for="quinta3">4º Período</label>
+    <input type="checkbox" id="quinta4" name="indisponibilidades" value="quinta-4">
+    <label for="quinta4">5º Período</label>
     <br>
-    <input type="checkbox" id="sexta" name="dias" value="Sexta">
-    <label for="sexta">Sexta-feira</label>
-
-    <br>
+    <span>Sexta-feira</span>
+    <input type="checkbox" id="sexta0" name="indisponibilidades" value="sexta-0">
+    <label for="sexta0">1º Período</label>
+    <input type="checkbox" id="sexta1" name="indisponibilidades" value="sexta-1">
+    <label for="sexta1">2º Período</label>
+    <input type="checkbox" id="sexta2" name="indisponibilidades" value="sexta-2">
+    <label for="sexta2">3º Período</label>
+    <input type="checkbox" id="sexta3" name="indisponibilidades" value="sexta-3">
+    <label for="sexta3">4º Período</label>
+    <input type="checkbox" id="sexta4" name="indisponibilidades" value="sexta-4">
+    <label for="sexta4">5º Período</label>
+    <br><br>
     <button type="submit">Adicionar Disciplina</button>
   </form>
 
-  <table id="cronograma">
+  <table id="tabela-disciplinas">
     <thead>
       <tr>
-        <th>Dia</th>
-        <th>Período 1</th>
-        <th>Período 2</th>
-        <th>Período 3</th>
-        <th>Período 4</th>
-        <th>Período 5</th>
+        <th></th>
+        <th>1º Período</th>
+        <th>2º Período</th>
+        <th>3º Período</th>
+        <th>4º Período</th>
+        <th>5º Período</th>
       </tr>
     </thead>
-    <tbody id="corpo-tabela">
+    <tbody>
+      <tr>
+        <th>Segunda-feira</th>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+      </tr>
+      <tr>
+        <th>Terça-feira</th>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+      </tr>
+      <tr>
+        <th>Quarta-feira</th>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+      </tr>
+      <tr>
+        <th>Quinta-feira</th>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+      </tr>
+      <tr>
+        <th>Sexta-feira</th>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+      </tr>
     </tbody>
   </table>
-
-  <button id="reorganizar">Reorganizar Disciplinas</button>
 
   <script src="script.js"></script>
 </body>
