@@ -1,66 +1,120 @@
 <!DOCTYPE html>
 <html lang="pt-br">
-
 <head>
   <meta charset="UTF-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="author" content="Johnnie Menges Giacomelli">
-  <meta name="description" content="Um site para procurar vagas de emprego e serviços terceirizados">
-  <meta name="robots" content="index, follow"> <!--já é padrão-->
-  <title>Cronograma Escolar</title>
-  <link rel="stylesheet" type="text/css" href="style.css">
+  <title>Organizador de Disciplinas</title>
+  <link rel="stylesheet" href="styles.css">
 </head>
-
 <body>
-  <h1>Cronograma Escolar</h1>
+  <h1>Organizador de Disciplinas</h1>
 
-  <form id="form-disciplina">
-    <label for="nome">Disciplina:</label>
-    <input type="text" id="nome" required>
-    <br><br>
-    <label for="aulas">Aulas por semana:</label>
-    <input type="number" id="aulas" required>
-    <br><br>
-    <label for="dias">Dias em que não pode estar:</label>
-    <br>
-    <input type="checkbox" id="segunda" name="dias" value="Segunda">
-    <label for="segunda">Segunda-feira</label>
-    <br>
-    <input type="checkbox" id="terca" name="dias" value="Terça">
-    <label for="terca">Terça-feira</label>
-    <br>
-    <input type="checkbox" id="quarta" name="dias" value="Quarta">
-    <label for="quarta">Quarta-feira</label>
-    <br>
-    <input type="checkbox" id="quinta" name="dias" value="Quinta">
-    <label for="quinta">Quinta-feira</label>
-    <br>
-    <input type="checkbox" id="sexta" name="dias" value="Sexta">
-    <label for="sexta">Sexta-feira</label>
+  <div id="form-periodos">
+    <form onsubmit="cadastrarPeriodos(); return false;">
+      <label for="periodos">Número total de períodos:</label>
+      <input type="number" id="periodos" min="1" required>
+      <button type="submit">Cadastrar</button>
+    </form>
+  </div>
 
-    <br>
-    <button type="submit">Adicionar Disciplina</button>
-  </form>
+  <div id="form-disciplinas" style="display: none;">
+    <h2>Cadastrar Disciplina</h2>
+    <form onsubmit="cadastrarDisciplina(); return false;">
+      <label for="nome">Nome da disciplina:</label>
+      <input type="text" id="nome" required>
+      <label for="periodos-disciplina">Número de períodos:</label>
+      <input type="number" id="periodos-disciplina" min="1" required>
 
-  <table id="cronograma">
-    <thead>
-      <tr>
-        <th>Dia</th>
-        <th>Período 1</th>
-        <th>Período 2</th>
-        <th>Período 3</th>
-        <th>Período 4</th>
-        <th>Período 5</th>
-      </tr>
-    </thead>
-    <tbody id="corpo-tabela">
-    </tbody>
-  </table>
+      <h3>Restrições de Horário:</h3>
+      <table>
+        <thead>
+          <tr>
+            <th></th>
+            <th>Segunda</th>
+            <th>Terça</th>
+            <th>Quarta</th>
+            <th>Quinta</th>
+            <th>Sexta</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>1º Período</td>
+            <td><input type="checkbox" id="restricao-0-0"></td>
+            <td><input type="checkbox" id="restricao-1-0"></td>
+            <td><input type="checkbox" id="restricao-2-0"></td>
+            <td><input type="checkbox" id="restricao-3-0"></td>
+            <td><input type="checkbox" id="restricao-4-0"></td>
+          </tr>
+          <tr>
+            <td>2º Período</td>
+            <td><input type="checkbox" id="restricao-0-1"></td>
+            <td><input type="checkbox" id="restricao-1-1"></td>
+            <td><input type="checkbox" id="restricao-2-1"></td>
+            <td><input type="checkbox" id="restricao-3-1"></td>
+            <td><input type="checkbox" id="restricao-4-1"></td>
+          </tr>
+          <tr>
+            <td>3º Período</td>
+            <td><input type="checkbox" id="restricao-0-2"></td>
+            <td><input type="checkbox" id="restricao-1-2"></td>
+            <td><input type="checkbox" id="restricao-2-2"></td>
+            <td><input type="checkbox" id="restricao-3-2"></td>
+            <td><input type="checkbox" id="restricao-4-2"></td>
+          </tr>
+          <tr>
+            <td>4º Período</td>
+            <td><input type="checkbox" id="restricao-0-3"></td>
+            <td><input type="checkbox" id="restricao-1-3"></td>
+            <td><input type="checkbox" id="restricao-2-3"></td>
+            <td><input type="checkbox" id="restricao-3-3"></td>
+            <td><input type="checkbox" id="restricao-4-3"></td>
+          </tr>
+          <tr>
+            <td>5º Período</td>
+            <td><input type="checkbox" id="restricao-0-4"></td>
+            <td><input type="checkbox" id="restricao-1-4"></td>
+            <td><input type="checkbox" id="restricao-2-4"></td>
+            <td><input type="checkbox" id="restricao-3-4"></td>
+            <td><input type="checkbox" id="restricao-4-4"></td>
+          </tr>
+        </tbody>
+      </table>
 
-  <button id="reorganizar">Reorganizar Disciplinas</button>
+      <button type="submit">Cadastrar</button>
+    </form>
+  </div>
+
+  <div id="disciplinas">
+    <h2>Disciplinas Cadastradas</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>Disciplina</th>
+          <th>Períodos</th>
+        </tr>
+      </thead>
+      <tbody id="disciplinas-table-body"></tbody>
+    </table>
+  </div>
+
+  <div id="horarios">
+    <h2>Horários</h2>
+    <table id="horarios-table">
+      <thead>
+        <tr>
+          <th></th>
+          <th>Segunda</th>
+          <th>Terça</th>
+          <th>Quarta</th>
+          <th>Quinta</th>
+          <th>Sexta</th>
+        </tr>
+      </thead>
+      <tbody id="horarios-table-body"></tbody>
+    </table>
+  </div>
 
   <script src="script.js"></script>
 </body>
-
 </html>
