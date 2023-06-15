@@ -1,103 +1,147 @@
 let totalPeriodos = 0;
-const disciplinas = [];
+let periodosRestantes = 0;
+let disciplinas = [];
+
+function cadastrarPeriodos() {
+  const inputPeriodos = document.getElementById('periodos');
+  totalPeriodos = parseInt(inputPeriodos.value);
+  periodosRestantes = totalPeriodos;
+  
+  inputPeriodos.setAttribute('disabled', 'disabled');
+  
+  const formPeriodos = document.getElementById('form-periodos');
+  formPeriodos.style.display = 'none';
+  
+  const formDisciplinas = document.getElementById('form-disciplinas');
+  formDisciplinas.style.display = 'block';
+}
 
 function cadastrarDisciplina() {
-  const inputPeriodos = document.getElementById('periodos');
-  const periodos = parseInt(inputPeriodos.value);
-  if (isNaN(periodos) || periodos <= 0) {
-    alert('Por favor, insira um número válido de períodos.');
-    return;
-  }
+  const inputNome = document.getElementById('nome');
+  const inputPeriodos = document.getElementById('periodos-disciplina');
   
-  if (totalPeriodos + periodos > 25) {
-    alert('O número total de períodos excede o limite de 25 períodos.');
-    return;
-  }
+  const disciplina = {
+    nome: inputNome.value,
+    periodos: parseInt(inputPeriodos.value),
+    restricoes: [],
+  };
   
-  totalPeriodos += periodos;
-  inputPeriodos.value = '';
-  
-  const disciplina = prompt('Insira o nome da disciplina:');
-  if (!disciplina) {
-    return;
-  }
-  
-  const restricoes = [];
-  for (let periodo = 1; periodo <= 5; periodo++) {
-    const checkbox = document.getElementById(`restricao-${periodo}`);
-    if (checkbox.checked) {
-      restricoes.push(periodo);
+  for (let dia = 0; dia < 5; dia++) {
+    for (let periodo = 0; periodo < 3; periodo++) {
+      const checkboxId = `restricao-${dia}-${periodo}`;
+      const checkbox = document.getElementById(checkboxId);
+      
+      if (checkbox.checked) {
+        disciplina.restricoes.push({ dia, periodo });
+      }
     }
   }
   
-  const disciplinaObj = {
-    nome: disciplina,
-    periodos: periodos,
-    restricoes: restricoes
-  };
+  disciplinas.push(disciplina);
+  periodosRestantes -= disciplina.periodos;
   
-  disciplinas.push(disciplinaObj);
+  inputNome.value = '';
+  inputPeriodos.value = '';
   
-  if (totalPeriodos === 25) {
-    const form = document.getElementById('form');
-    form.style.display = 'none';
+  exibirDisciplinas();
+  
+  if (periodosRestantes === 0) {
+    const formDisciplinas = document.getElementById('form-disciplinas');
+    formDisciplinas.style.display = 'none';
+    
     organizarDisciplinas();
-    exibirDisciplinas();
-  } else {
-    alert(`Disciplina "${disciplina}" cadastrada com sucesso.`);
   }
 }
 
 function organizarDisciplinas() {
-  disciplinas.sort((a, b) => b.periodos - a.periodos); // Ordenar disciplinas em ordem decrescente de períodos
-  
-  const tabela = Array.from({ length: 5 }, () => Array.from({ length: 5 }, () => '')); // Tabela de horários (5 dias x 5 períodos)
+  const tabela = [];
+  for (let dia = 0; dia < 5; dia++) {
+    tabela[dia] = ['', '', '', '', ''];
+  }
   
   for (let i = 0; i < disciplinas.length; i++) {
     const disciplina = disciplinas[i];
-    const restricoes = disciplina.restricoes;
-    
-    let periodoInserido = false;
     
     for (let dia = 0; dia < 5; dia++) {
-      for (let periodo = 0; periodo < 5; periodo++) {
-        if (tabela[dia][periodo] === '') { // Verificar se o horário está vago
-          const proximoPeriodo = periodo + 1;
-          const proximoDia = dia + Math.floor((periodo + 1) / 5);
-          
-          if (!restricoes.includes(proximoPeriodo) && (proximoPeriodo < 4 || proximoPeriodo > 4) && tabela[proximoDia][proximoPeriodo] === '') {
-            // Verificar se o próximo período está disponível e não possui restrições
-            tabela[dia][periodo] = disciplina.nome;
-            tabela[proximoDia][proximoPeriodo] = disciplina.nome;
-            periodoInserido = true;
-            break;
-          }
-        }
-      }
-      if (periodoInserido) {
+      if (disciplina.periodos === 0) {
         break;
+      }
+      
+      for (let periodo = 0; periodo < 5; periodo++) {
+        if (disciplina.periodos === 0) {
+          break;
+        }
+        
+        if (tabela[dia][periodo] === '' && !temRestricao(disciplina.restricoes, dia, periodo)) {
+          tabela[dia][periodo] = disciplina.nome;
+          disciplina.periodos--;
+        }
       }
     }
   }
   
-  console.log(tabela);
+  exibirTabela(tabela);
+}
+
+function temRestricao(restricoes, dia, periodo) {
+  for (let i = 0; i < restricoes.length; i++) {
+    const restricao = restricoes[i];
+    
+    if (restricao.dia === dia && restricao.periodo === periodo) {
+      return true;
+    }
+  }
+  
+  return false;
 }
 
 function exibirDisciplinas() {
   const tableBody = document.getElementById('disciplinas-table-body');
+  tableBody.innerHTML = '';
   
   for (let i = 0; i < disciplinas.length; i++) {
     const disciplina = disciplinas[i];
     
     const row = document.createElement('tr');
-    const nomeCell = document.createElement('td');
-    const periodosCell = document.createElement('td');
     
+    const nomeCell = document.createElement('td');
     nomeCell.textContent = disciplina.nome;
+    
+    const periodosCell = document.createElement('td');
     periodosCell.textContent = disciplina.periodos;
     
     row.appendChild(nomeCell);
     row.appendChild(periodosCell);
+    
     tableBody.appendChild(row);
   }
 }
+
+function exibirTabela(tabela) {
+  const tableBody = document.getElementById('horarios-table-body');
+  tableBody.innerHTML = '';
+  
+  for (let periodo = 0; periodo < 5; periodo++) {
+    const row = document.createElement('tr');
+    
+    const periodoCell = document.createElement('td');
+    periodoCell.textContent = `Período ${periodo + 1}`;
+    
+    row.appendChild(periodoCell);
+    
+    for (let dia = 0; dia < 5; dia++) {
+      const disciplina = tabela[dia][periodo];
+      
+      const disciplinaCell = document.createElement('td');
+      disciplinaCell.textContent = disciplina;
+      
+      row.appendChild(disciplinaCell);
+    }
+    
+    tableBody.appendChild(row);
+  }
+  
+  const table = document.getElementById('horarios-table');
+  table.style.display = 'block';
+}
+
