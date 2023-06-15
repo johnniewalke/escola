@@ -117,4 +117,31 @@ function exibirDisciplinas() {
   }
 }
 
+function exibirTabela(tabela) {
+  const tableBody = document.getElementById('horarios-table-body');
+  tableBody.innerHTML = '';
+  
+  for (let periodo = 0; periodo < 5; periodo++) {
+    const row = document.createElement('tr');
+    
+    const periodoCell = document.createElement('td');
+    periodoCell.textContent = `Período ${periodo + 1}`;
+    
+    row.appendChild(periodoCell);
+    
+    for (let dia = 0; dia < 5; dia++) {
+      const disciplina = tabela[dia][periodo];
+      
+      const disciplinaCell = document.createElement('td');
+      disciplinaCell.textContent = disciplina;
+      
+      row.appendChild(disciplinaCell);
+    }
+    
+    tableBody.appendChild(row);
+  }
+  
+  const table = document.getElementById('horarios-table');
+  table.style.display = 'block';
+}
 
