@@ -1,41 +1,65 @@
-table {
-  width: 100%;
-  border-collapse: collapse;
+body {
+  font-family: Arial, sans-serif;
+  margin: 0;
+  padding: 20px;
 }
 
-th, td {
-  border: 1px solid black;
-  padding: 8px;
-}
-
-th {
-  background-color: #ccc;
-}
-
-td.disciplina {
+h1 {
   text-align: center;
 }
 
-td.disciplina:nth-child(6n+1) {
-  background-color: #fca3cc;
+#form-periodos,
+#form-disciplinas {
+  margin-bottom: 20px;
 }
 
-td.disciplina:nth-child(6n+2) {
-  background-color: #a3a3fc;
+form {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
-td.disciplina:nth-child(6n+3) {
-  background-color: #a3fca3;
+label {
+  font-weight: bold;
+  margin-bottom: 5px;
 }
 
-td.disciplina:nth-child(6n+4) {
-  background-color: #fcd5a3;
+input[type="number"],
+input[type="text"] {
+  margin-bottom: 10px;
+  padding: 5px;
+  width: 200px;
 }
 
-td.disciplina:nth-child(6n+5) {
-  background-color: #fca366;
+table {
+  border-collapse: collapse;
+  margin-bottom: 10px;
 }
 
-td.disciplina:nth-child(6n+6) {
-  background-color: #a366a3;
+th,
+td {
+  padding: 5px;
+  text-align: center;
+}
+
+button {
+  padding: 5px 10px;
+}
+
+#disciplinas,
+#horarios {
+  margin-bottom: 20px;
+}
+
+#horarios-table {
+  margin-top: 10px;
+}
+
+#horarios-table th,
+#horarios-table td {
+  width: 100px;
+}
+
+#horarios-table th:first-child {
+  text-align: left;
 }

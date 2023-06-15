@@ -1,160 +1,103 @@
-let diasSemana = ["Segunda", "Terça", "Quarta", "Quinta", "Sexta"];
-let disciplinas = {};
+let totalPeriodos = 0;
+const disciplinas = [];
 
-let formDisciplina = document.getElementById("form-disciplina");
-formDisciplina.addEventListener("submit", function(event) {
-  event.preventDefault();
-  let nome = document.getElementById("nome").value;
-  let aulas = parseInt(document.getElementById("aulas").value);
-  let diasIndisponiveis = obterDiasIndisponiveis();
-  adicionarDisciplina(nome, aulas, diasIndisponiveis);
-  formDisciplina.reset();
-});
-
-let botaoReorganizar = document.getElementById("reorganizar");
-botaoReorganizar.addEventListener("click", function(event) {
-  event.preventDefault();
-  reorganizarDisciplinas();
-});
-
-function obterDiasIndisponiveis() {
-  let diasIndisponiveis = [];
-  let checkboxes = document.getElementsByName("dias");
-  checkboxes.forEach(function(checkbox) {
+function cadastrarDisciplina() {
+  const inputPeriodos = document.getElementById('periodos');
+  const periodos = parseInt(inputPeriodos.value);
+  if (isNaN(periodos) || periodos <= 0) {
+    alert('Por favor, insira um número válido de períodos.');
+    return;
+  }
+  
+  if (totalPeriodos + periodos > 25) {
+    alert('O número total de períodos excede o limite de 25 períodos.');
+    return;
+  }
+  
+  totalPeriodos += periodos;
+  inputPeriodos.value = '';
+  
+  const disciplina = prompt('Insira o nome da disciplina:');
+  if (!disciplina) {
+    return;
+  }
+  
+  const restricoes = [];
+  for (let periodo = 1; periodo <= 5; periodo++) {
+    const checkbox = document.getElementById(`restricao-${periodo}`);
     if (checkbox.checked) {
-      diasIndisponiveis.push(checkbox.value);
-    }
-  });
-  return diasIndisponiveis;
-}
-
-function adicionarDisciplina(nome, aulas, diasIndisponiveis) {
-  let diasDisponiveis = [...diasSemana];
-  let aulasRestantes = aulas;
-  let corDisciplina = getRandomColor(); // Gera uma cor aleatória para a disciplina
-
-  while (aulasRestantes > 0 && diasDisponiveis.length > 0) {
-    let diaAleatorio = getRandomDia(diasDisponiveis);
-    let periodosDisponiveis = getPeriodosDisponiveis(diaAleatorio, diasIndisponiveis);
-
-    if (periodosDisponiveis.length > 0) {
-      let periodoAleatorio = getRandomPeriodo(periodosDisponiveis);
-      disciplinas[diaAleatorio][periodoAleatorio] = {
-        nome: nome,
-        cor: corDisciplina,
-        diasIndisponiveis: diasIndisponiveis
-      };
-      aulasRestantes--;
-    } else {
-      diasDisponiveis = diasDisponiveis.filter(dia => dia !== diaAleatorio);
+      restricoes.push(periodo);
     }
   }
-
-  atualizarTabela();
-}
-
-function getRandomDia(dias) {
-  let randomIndex = Math.floor(Math.random() * dias.length);
-  return dias[randomIndex];
-}
-
-function getPeriodosDisponiveis(dia, diasIndisponiveis) {
-  let periodos = [];
-  for (let i = 0; i < 5; i++) {
-    if (!disciplinas[dia][i] && !verificarDiaIndisponivel(dia, i, diasIndisponiveis)) {
-      periodos.push(i);
-    }
+  
+  const disciplinaObj = {
+    nome: disciplina,
+    periodos: periodos,
+    restricoes: restricoes
+  };
+  
+  disciplinas.push(disciplinaObj);
+  
+  if (totalPeriodos === 25) {
+    const form = document.getElementById('form');
+    form.style.display = 'none';
+    organizarDisciplinas();
+    exibirDisciplinas();
+  } else {
+    alert(`Disciplina "${disciplina}" cadastrada com sucesso.`);
   }
-  return periodos;
 }
 
-function verificarDiaIndisponivel(dia, periodo, diasIndisponiveis) {
-  for (let i = 0; i < diasIndisponiveis.length; i++) {
-    if (diasIndisponiveis[i] === dia) {
-      return true;
-    }
-  }
-  return false;
-}
-
-function getRandomPeriodo(periodos) {
-  let randomIndex = Math.floor(Math.random() * periodos.length);
-  return periodos[randomIndex];
-}
-
-function getRandomColor() {
-  let letters = "0123456789ABCDEF";
-  let color = "#";
-  for (let i = 0; i < 6; i++) {
-    color += letters[Math.floor(Math.random() * 16)];
-  }
-  return color;
-}
-
-function atualizarTabela() {
-  let corpoTabela = document.getElementById("corpo-tabela");
-  corpoTabela.innerHTML = "";
-
-  for (let i = 0; i < 5; i++) {
-    let linha = document.createElement("tr");
-    let colunaDia = document.createElement("td");
-    colunaDia.textContent = diasSemana[i];
-    linha.appendChild(colunaDia);
-
-    for (let j = 0; j < 5; j++) {
-      let colunaPeriodo = document.createElement("td");
-      let disciplina = disciplinas[diasSemana[i]][j];
-      if (disciplina) {
-        colunaPeriodo.textContent = disciplina.nome;
-        colunaPeriodo.style.backgroundColor = disciplina.cor;
+function organizarDisciplinas() {
+  disciplinas.sort((a, b) => b.periodos - a.periodos); // Ordenar disciplinas em ordem decrescente de períodos
+  
+  const tabela = Array.from({ length: 5 }, () => Array.from({ length: 5 }, () => '')); // Tabela de horários (5 dias x 5 períodos)
+  
+  for (let i = 0; i < disciplinas.length; i++) {
+    const disciplina = disciplinas[i];
+    const restricoes = disciplina.restricoes;
+    
+    let periodoInserido = false;
+    
+    for (let dia = 0; dia < 5; dia++) {
+      for (let periodo = 0; periodo < 5; periodo++) {
+        if (tabela[dia][periodo] === '') { // Verificar se o horário está vago
+          const proximoPeriodo = periodo + 1;
+          const proximoDia = dia + Math.floor((periodo + 1) / 5);
+          
+          if (!restricoes.includes(proximoPeriodo) && (proximoPeriodo < 4 || proximoPeriodo > 4) && tabela[proximoDia][proximoPeriodo] === '') {
+            // Verificar se o próximo período está disponível e não possui restrições
+            tabela[dia][periodo] = disciplina.nome;
+            tabela[proximoDia][proximoPeriodo] = disciplina.nome;
+            periodoInserido = true;
+            break;
+          }
+        }
       }
-      linha.appendChild(colunaPeriodo);
-    }
-
-    corpoTabela.appendChild(linha);
-  }
-}
-
-function reorganizarDisciplinas() {
-  let disciplinasArray = [];
-
-  // Converter as disciplinas em um array para facilitar o reajuste
-  for (let dia in disciplinas) {
-    for (let periodo in disciplinas[dia]) {
-      disciplinasArray.push({
-        dia: dia,
-        periodo: periodo,
-        disciplina: disciplinas[dia][periodo]
-      });
-    }
-  }
-
-  disciplinasArray.sort((a, b) => b.disciplina.diasIndisponiveis.length - a.disciplina.diasIndisponiveis.length);
-
-  let index = 0;
-  for (let dia of diasSemana) {
-    disciplinas[dia] = {};
-    let aulasRestantes = disciplinasArray.filter(item => item.dia === dia).length;
-
-    for (let i = 0; i < 5; i++) {
-      if (aulasRestantes === 0) {
+      if (periodoInserido) {
         break;
       }
-
-      if (!disciplinas[dia][i]) {
-        disciplinas[dia][i] = disciplinasArray[index].disciplina;
-        index++;
-        aulasRestantes--;
-      }
     }
   }
-
-  atualizarTabela();
+  
+  console.log(tabela);
 }
 
-// Inicialização da matriz de disciplinas
-for (let i = 0; i < diasSemana.length; i++) {
-  disciplinas[diasSemana[i]] = {};
+function exibirDisciplinas() {
+  const tableBody = document.getElementById('disciplinas-table-body');
+  
+  for (let i = 0; i < disciplinas.length; i++) {
+    const disciplina = disciplinas[i];
+    
+    const row = document.createElement('tr');
+    const nomeCell = document.createElement('td');
+    const periodosCell = document.createElement('td');
+    
+    nomeCell.textContent = disciplina.nome;
+    periodosCell.textContent = disciplina.periodos;
+    
+    row.appendChild(nomeCell);
+    row.appendChild(periodosCell);
+    tableBody.appendChild(row);
+  }
 }
-
-atualizarTabela();
