@@ -95,4 +95,26 @@ function temRestricao(restricoes, dia, periodo) {
   return false;
 }
 
+function exibirDisciplinas() {
+  const tableBody = document.getElementById('disciplinas-table-body');
+  tableBody.innerHTML = '';
+  
+  for (let i = 0; i < disciplinas.length; i++) {
+    const disciplina = disciplinas[i];
+    
+    const row = document.createElement('tr');
+    
+    const nomeCell = document.createElement('td');
+    nomeCell.textContent = disciplina.nome;
+    
+    const periodosCell = document.createElement('td');
+    periodosCell.textContent = disciplina.periodos;
+    
+    row.appendChild(nomeCell);
+    row.appendChild(periodosCell);
+    
+    tableBody.appendChild(row);
+  }
+}
+
 
